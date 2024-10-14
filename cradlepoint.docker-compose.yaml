@@ -1,0 +1,83 @@
+version: "3.3"
+services:
+  starlink_exporter:
+    image: "ghcr.io/danopstech/starlink_exporter:latest"
+    restart: always
+    ports:
+      - "9817:9817"
+    networks:
+      lannet:
+        ipv4_address: 10.99.99.2
+
+  speedtest_exporter:
+    image: "ghcr.io/danopstech/speedtest_exporter:latest"
+    restart: always
+    ports:
+      - "9092:9090"
+    networks:
+      lannet:
+        ipv4_address: 10.99.99.3
+
+  blackbox:
+    image: "docker.io/benkotvis/starlink-blackbox:0.0.1"
+    restart: always
+    user: "root"
+    ports:
+      - "9115:9115"
+    volumes:
+      - 'blackbox-config:/etc/blackbox_exporter/config.yml'
+    networks:
+      lannet:
+        ipv4_address: 10.99.99.4
+
+  prometheus:
+    image: "docker.io/benkotvis/starlink-prometheus:0.0.1"
+    restart: always
+    user: "root"
+    ports:
+      - "9090:9090"
+    volumes:
+      - 'prometheus-config:/etc/prometheus/prometheus.yml'
+      - 'prometheus-data:/prometheus'
+    networks:
+      lannet:
+        ipv4_address: 10.99.99.5
+
+  grafana:
+    image: "docker.io/benkotvis/starlink-grafana:0.0.1"
+    restart: always
+    user: "root"
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_INSTALL_PLUGINS=ae3e-plotly-panel
+      - GF_LOG_CONSOLE_LEVEL=warn
+    volumes:
+      - 'grafana-data:/var/lib/grafana'
+      - 'grafana-provisioning:/etc/grafana/provisioning/'
+    networks:
+      lannet:
+        ipv4_address: 10.99.99.6
+
+volumes:
+  blackbox-config:
+    driver: local
+  prometheus-config:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  grafana-provisioning:
+    driver: local
+
+networks:
+  lannet:
+    driver: bridge
+    driver_opts:
+      com.cradlepoint.network.bridge.uuid: 00000002-0d93-319d-8220-4a1fb0372b51
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.99.99.0/24
+          gateway: 10.99.99.1
