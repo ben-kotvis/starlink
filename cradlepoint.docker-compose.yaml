@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   starlink_exporter:
-    image: ghcr.io/danopstech/starlink_exporter:latest
+    image: "ghcr.io/danopstech/starlink_exporter:latest"
     ports:
       - "9817:9817"
     networks:
@@ -9,7 +9,7 @@ services:
         ipv4_address: 10.99.99.2
 
   speedtest_exporter:
-    image: ghcr.io/danopstech/speedtest_exporter:latest
+    image: "ghcr.io/danopstech/speedtest_exporter:latest"
     ports:
       - "9092:9090"
     networks:
@@ -17,7 +17,8 @@ services:
         ipv4_address: 10.99.99.3
 
   blackbox:
-    image: benkotvis/starlink-blackbox:0.0.2
+    image: "docker.io/benkotvis/starlink-blackbox:0.0.2"
+    user: "root"
     ports:
       - "9115:9115"
     volumes:
@@ -27,7 +28,8 @@ services:
         ipv4_address: 10.99.99.4
 
   prometheus:
-    image: benkotvis/starlink-prometheus:0.0.2
+    image: "docker.io/benkotvis/starlink-prometheus:0.0.2"
+    user: "root"
     ports:
       - "9090:9090"
     volumes:
@@ -38,7 +40,8 @@ services:
         ipv4_address: 10.99.99.5
 
   grafana:
-    image: benkotvis/starlink-grafana:0.0.2
+    image: "docker.io/benkotvis/starlink-grafana:0.0.4"
+    user: "root"
     ports:
       - "3000:3000"
     environment:
