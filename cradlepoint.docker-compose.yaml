@@ -40,10 +40,12 @@ services:
         ipv4_address: 10.99.99.5
 
   grafana:
-    image: "docker.io/benkotvis/starlink-grafana:0.0.4"
+    image: "docker.io/benkotvis/starlink-grafana:0.0.5"
     user: "root"
     ports:
       - "3000:3000"
+    logging:
+      driver: json-file
     environment:
       - GF_INSTALL_PLUGINS=ae3e-plotly-panel
       - GF_LOG_CONSOLE_LEVEL=warn
