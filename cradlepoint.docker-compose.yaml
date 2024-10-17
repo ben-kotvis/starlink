@@ -1,4 +1,4 @@
-version: "3.3"
+version: "2.4"
 services:
   starlink_exporter:
     image: "ghcr.io/danopstech/starlink_exporter:latest"
@@ -17,10 +17,12 @@ services:
         ipv4_address: 10.99.99.3
 
   blackbox:
-    image: "docker.io/benkotvis/starlink-blackbox:0.0.2"
+    image: "ghcr.io/danopstech/blackbox_exporter:latest"
     user: "root"
     ports:
       - "9115:9115"
+    logging:
+      driver: json-file
     volumes:
       - 'blackbox-config:/etc/blackbox_exporter'
     networks:
@@ -28,19 +30,21 @@ services:
         ipv4_address: 10.99.99.4
 
   prometheus:
-    image: "docker.io/benkotvis/starlink-prometheus:0.0.2"
+    image: "ghcr.io/danopstech/prometheus:latest"
     user: "root"
     ports:
       - "9090:9090"
     volumes:
       - 'prometheus-config:/etc/prometheus'
       - 'prometheus-data:/prometheus'
+    logging:
+      driver: json-file
     networks:
       lannet:
         ipv4_address: 10.99.99.5
 
   grafana:
-    image: "docker.io/benkotvis/starlink-grafana:0.0.5"
+    image: "ghcr.io/danopstech/grafana:latest"
     user: "root"
     ports:
       - "3000:3000"
@@ -51,10 +55,29 @@ services:
       - GF_LOG_CONSOLE_LEVEL=warn
     volumes:
       - 'grafana-data:/var/lib/grafana'
-      - 'grafana-provisioning:/etc/grafana/provisioning/'
+      - 'grafana-config:/etc/grafana/provisioning/'
     networks:
       lannet:
         ipv4_address: 10.99.99.6
+
+  api:
+    image: "docker.io/benkotvis/starlink-grafana:0.0.5"
+    user: "root"
+    ports:
+      - "5007:5007"
+    logging:
+      driver: json-file
+    environment:
+      - ASPNETCORE_URLS=http://+:5007
+    volumes:
+      - 'grafana-data:/grafana-data'
+      - 'grafana-config:/grafana-config'
+      - 'prometheus-data:/prometheus-data'
+      - 'prometheus-config:/prometheus-config'   
+      - 'blackbox-config:/blackbox-config' 
+    networks:
+      lannet:
+        ipv4_address: 10.99.99.7
 
 volumes:
   blackbox-config:
@@ -65,7 +88,7 @@ volumes:
     driver: local
   grafana-data:
     driver: local
-  grafana-provisioning:
+  grafana-config:
     driver: local
 
 networks:
