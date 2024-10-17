@@ -61,7 +61,7 @@ services:
         ipv4_address: 10.99.99.6
 
   api:
-    image: "docker.io/benkotvis/starlink-grafana:0.0.5"
+    image: "docker.io/benkotvis/starlink-api:0.0.4"
     user: "root"
     ports:
       - "5007:5007"
@@ -70,11 +70,11 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:5007
     volumes:
-      - 'grafana-data:/grafana-data'
-      - 'grafana-config:/grafana-config'
-      - 'prometheus-data:/prometheus-data'
-      - 'prometheus-config:/prometheus-config'   
-      - 'blackbox-config:/blackbox-config' 
+      - 'grafana-data:/app/grafana-data'
+      - 'grafana-config:/app/grafana-config'
+      - 'prometheus-data:/app/prometheus-data'
+      - 'prometheus-config:/app/prometheus-config'   
+      - 'blackbox-config:/app/blackbox-config' 
     networks:
       lannet:
         ipv4_address: 10.99.99.7
