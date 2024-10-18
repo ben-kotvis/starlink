@@ -1118,7 +1118,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "starlink_dish_wedge_fraction_obstruction_ratio{instance=\"$DishID\"} * 100 > 0 ",
+          "expr": "starlink_dish_fraction_obstruction_ratio{instance=\"$DishID\"} * 100 > 0 ",
           "interval": "",
           "legendFormat": "{{ wedge_name }}",
           "refId": "A"
